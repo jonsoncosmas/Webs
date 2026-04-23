@@ -11,7 +11,15 @@
     <div class="grid cols-2" style="margin-top:16px;">
         <div class="card">
             <h3>Quick actions</h3>
-            <p class="muted">Role-specific tools will appear here as modules roll out.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                @can('viewAny', App\Models\Exam::class)
+                    <a class="btn ghost" href="{{ route('exams.index') }}">Exams</a>
+                @endcan
+                @can('create', App\Models\Exam::class)
+                    <a class="btn" href="{{ route('exams.create') }}">New exam</a>
+                @endcan
+            </div>
+            <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>
         @include('partials.orion-widget')
     </div>

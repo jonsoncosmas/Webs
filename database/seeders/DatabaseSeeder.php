@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PackageSeeder::class,
             SystemAdminSeeder::class,
+            DemoSchoolSeeder::class,
         ]);
     }
 }

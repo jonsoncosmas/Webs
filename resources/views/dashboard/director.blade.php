@@ -30,6 +30,10 @@
         <div class="card">
             <h3>Override authority</h3>
             <p class="muted">You can override any exam created by lower-ranked staff. Exams you create are locked to you.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                <a class="btn ghost" href="{{ route('exams.index') }}">Exams</a>
+                <a class="btn" href="{{ route('exams.create') }}">New exam</a>
+            </div>
         </div>
         @include('partials.orion-widget')
     </div>
