@@ -218,3 +218,60 @@ a:hover { color: var(--primary-hover); }
     white-space: pre-wrap;
     min-height: 1.5em;
 }
+
+/* ---------- Print layout (A4 portrait) ---------- */
+.sheet {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    color: #0f172a;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 18mm 16mm;
+    margin: 12px auto;
+    box-sizing: border-box;
+    font-size: 12pt;
+}
+.sheet h1, .sheet h2, .sheet h3 { color: #0f172a; margin: 0 0 6pt 0; }
+.sheet .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 8pt;
+    margin-bottom: 10pt;
+}
+.sheet .hdr .school { font-size: 14pt; font-weight: 700; }
+.sheet .hdr .meta { font-size: 10pt; color: #475569; text-align: right; }
+.sheet table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+.sheet th, .sheet td { border: 1px solid #cbd5e1; padding: 6pt 8pt; text-align: left; }
+.sheet th { background: #f1f5f9; font-size: 10pt; text-transform: uppercase; letter-spacing: 0.4px; }
+.sheet .sig {
+    display: flex;
+    justify-content: space-between;
+    gap: 30pt;
+    margin-top: 30pt;
+    font-size: 11pt;
+}
+.sheet .sig .slot { flex: 1; border-top: 1px solid #0f172a; padding-top: 4pt; text-align: center; }
+.print-toolbar {
+    max-width: 210mm;
+    margin: 12px auto;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+@media print {
+    body { background: #fff !important; }
+    .topbar, .print-toolbar, .no-print { display: none !important; }
+    .sheet {
+        box-shadow: none;
+        border: 0;
+        margin: 0;
+        width: auto;
+        min-height: auto;
+    }
+    .container { padding: 0; }
+    @page { size: A4 portrait; margin: 12mm; }
+}

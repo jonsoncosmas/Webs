@@ -44,4 +44,13 @@
         </div>
         @include('partials.orion-widget')
     </div>
+
+    <div class="card" style="margin-top:16px;">
+        <h3>Templates</h3>
+        <p class="muted">Author result marklists and academic report formats once. Schools assign them to classes and staff.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a class="btn ghost" href="{{ route('templates.index') }}">All templates</a>
+            <a class="btn" href="{{ route('templates.create') }}">New template</a>
+        </div>
+    </div>
 @endsection

@@ -18,6 +18,12 @@
                 @can('create', App\Models\Exam::class)
                     <a class="btn" href="{{ route('exams.create') }}">New exam</a>
                 @endcan
+                @can('viewAny', App\Models\TemplateAssignment::class)
+                    <a class="btn ghost" href="{{ route('assignments.index') }}">Assignments</a>
+                @endcan
+                @can('create', App\Models\TemplateAssignment::class)
+                    <a class="btn" href="{{ route('assignments.create') }}">New assignment</a>
+                @endcan
             </div>
             <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>

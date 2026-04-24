@@ -19,4 +19,14 @@
         </div>
         @include('partials.orion-widget')
     </div>
+
+    <div class="card" style="margin-top:16px;">
+        <h3>Marklists &amp; report cards</h3>
+        <p class="muted">Assign templates to classes, track readiness, and print A4 sheets.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a class="btn ghost" href="{{ route('templates.index') }}">Templates</a>
+            <a class="btn ghost" href="{{ route('assignments.index') }}">Assignments</a>
+            <a class="btn" href="{{ route('assignments.create') }}">New assignment</a>
+        </div>
+    </div>
 @endsection

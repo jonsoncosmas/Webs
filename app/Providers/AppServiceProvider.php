@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Exam;
+use App\Models\Template;
+use App\Models\TemplateAssignment;
 use App\Policies\ExamPolicy;
+use App\Policies\TemplateAssignmentPolicy;
+use App\Policies\TemplatePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,5 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Exam::class, ExamPolicy::class);
+        Gate::policy(Template::class, TemplatePolicy::class);
+        Gate::policy(TemplateAssignment::class, TemplateAssignmentPolicy::class);
     }
 }
