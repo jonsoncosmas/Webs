@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             PackageSeeder::class,
             SystemAdminSeeder::class,
             DemoSchoolSeeder::class,
+            TemplateSeeder::class,
         ]);
     }
 }

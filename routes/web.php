@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Exams\ExamController;
 use App\Http\Controllers\Orion\OrionController;
+use App\Http\Controllers\Templates\TemplateAssignmentController;
+use App\Http\Controllers\Templates\TemplateController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'));
@@ -41,5 +43,22 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/exams/{exam}/override', [ExamController::class, 'override'])->name('exams.override');
         Route::post('/exams/{exam}/publish', [ExamController::class, 'publish'])->name('exams.publish');
         Route::post('/exams/{exam}/archive', [ExamController::class, 'archive'])->name('exams.archive');
+
+        // Templates — System Admin authors; schools list & assign.
+        Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
+        Route::get('/templates/create', [TemplateController::class, 'create'])->name('templates.create');
+        Route::post('/templates', [TemplateController::class, 'store'])->name('templates.store');
+        Route::get('/templates/{template}', [TemplateController::class, 'show'])->name('templates.show');
+        Route::post('/templates/{template}/archive', [TemplateController::class, 'archive'])->name('templates.archive');
+        Route::post('/templates/{template}/activate', [TemplateController::class, 'activate'])->name('templates.activate');
+
+        // Template assignments — school-scoped.
+        Route::get('/assignments', [TemplateAssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('/assignments/create', [TemplateAssignmentController::class, 'create'])->name('assignments.create');
+        Route::post('/assignments', [TemplateAssignmentController::class, 'store'])->name('assignments.store');
+        Route::get('/assignments/{assignment}', [TemplateAssignmentController::class, 'show'])->name('assignments.show');
+        Route::post('/assignments/{assignment}/ready', [TemplateAssignmentController::class, 'markReady'])->name('assignments.ready');
+        Route::post('/assignments/{assignment}/reopen', [TemplateAssignmentController::class, 'reopen'])->name('assignments.reopen');
+        Route::get('/assignments/{assignment}/print', [TemplateAssignmentController::class, 'print'])->name('assignments.print');
     });
 });
