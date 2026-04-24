@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             SystemAdminSeeder::class,
             DemoSchoolSeeder::class,
             TemplateSeeder::class,
+            StaffSeeder::class,
         ]);
     }
 }

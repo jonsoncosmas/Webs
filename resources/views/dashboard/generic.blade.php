@@ -24,6 +24,10 @@
                 @can('create', App\Models\TemplateAssignment::class)
                     <a class="btn" href="{{ route('assignments.create') }}">New assignment</a>
                 @endcan
+                @can('viewAny', App\Models\StaffProfile::class)
+                    <a class="btn ghost" href="{{ route('hr.index') }}">Staff directory</a>
+                @endcan
+                <a class="btn ghost" href="{{ route('hr.me') }}">My HR profile</a>
             </div>
             <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>
