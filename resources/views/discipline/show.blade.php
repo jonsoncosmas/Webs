@@ -42,9 +42,13 @@
         <div class="grid cols-2" style="gap:16px;">
             <div>
                 <div class="muted" style="font-size:12px;">Subject</div>
-                <a href="{{ route('discipline.timeline', $incident->subject) }}" style="font-weight:600;">
-                    {{ $incident->subject?->fullName() ?? '—' }}
-                </a>
+                @if ($incident->subject)
+                    <a href="{{ route('discipline.timeline', $incident->subject) }}" style="font-weight:600;">
+                        {{ $incident->subject->fullName() }}
+                    </a>
+                @else
+                    <span style="font-weight:600;">—</span>
+                @endif
                 <div class="muted" style="font-size:12px; margin-top:2px;">
                     {{ $incident->subject?->role?->name ?? '—' }}
                 </div>
