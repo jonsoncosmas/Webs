@@ -48,8 +48,8 @@ class AttemptScoreController extends Controller
 
         $data = $request->validate([
             'student_user_id' => ['required', 'integer', 'exists:users,id'],
-            'score' => ['required', 'integer', 'min:0'],
             'total_marks' => ['required', 'integer', 'min:1'],
+            'score' => ['required', 'integer', 'min:0', 'lte:total_marks'],
             'grade' => ['nullable', 'string', 'max:5'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ]);

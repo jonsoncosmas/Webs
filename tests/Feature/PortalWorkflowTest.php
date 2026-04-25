@@ -464,6 +464,34 @@ class PortalWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_score_entry_rejects_score_exceeding_total_marks(): void
+    {
+        $teacher = $this->user(Role::TEACHER);
+        $student = $this->user(Role::STUDENT);
+        $exam = Exam::create([
+            'school_id' => $student->school_id,
+            'creator_id' => $teacher->id,
+            'creator_role_level' => $teacher->role->level,
+            'title' => 'Overshoot Exam',
+            'subject' => 'Math',
+            'status' => Exam::STATUS_PUBLISHED,
+            'total_marks' => 100,
+        ]);
+
+        $this->actingAs($teacher)
+            ->post(route('portal.scores.store', $exam), [
+                'student_user_id' => $student->id,
+                'score' => 150,
+                'total_marks' => 100,
+            ])
+            ->assertSessionHasErrors('score');
+
+        $this->assertDatabaseMissing('exam_attempts', [
+            'exam_id' => $exam->id,
+            'student_user_id' => $student->id,
+        ]);
+    }
+
     public function test_percentage_reports_zero_for_zero_score(): void
     {
         $teacher = $this->user(Role::TEACHER);
