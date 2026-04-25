@@ -34,6 +34,13 @@ class PortalController extends Controller
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
+        $openReviewCount = ResultReviewRequest::query()
+            ->where('student_user_id', $student->id)
+            ->whereIn('status', [
+                ResultReviewRequest::STATUS_PENDING,
+                ResultReviewRequest::STATUS_ACKNOWLEDGED,
+            ])
+            ->count();
 
         return view('portal.dashboard', [
             'user' => $user,
@@ -42,6 +49,7 @@ class PortalController extends Controller
             'attempts' => $attempts,
             'exams' => $exams,
             'reviews' => $reviews,
+            'openReviewCount' => $openReviewCount,
         ]);
     }
 

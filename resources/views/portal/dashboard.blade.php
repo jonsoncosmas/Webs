@@ -40,7 +40,7 @@
         </div>
         <div class="stat">
             <div class="label">Open reviews</div>
-            <div class="value">{{ $reviews->whereIn('status', ['pending', 'acknowledged'])->count() }}</div>
+            <div class="value">{{ $openReviewCount }}</div>
             <div class="hint">awaiting feedback</div>
         </div>
     </div>

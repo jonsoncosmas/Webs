@@ -573,6 +573,32 @@ class PortalWorkflowTest extends TestCase
 
     // ---------- System admin bypass ----------
 
+    public function test_open_review_count_counts_beyond_recent_five(): void
+    {
+        $student = $this->user(Role::STUDENT);
+        $teacher = $this->user(Role::TEACHER);
+        $ah = $this->user(Role::ACADEMIC_HEAD);
+        $service = app(PortalService::class);
+
+        // 5 resolved reviews (recent) + 2 older open ones \u2014 total 7, top-5-recent has 0 open.
+        for ($i = 0; $i < 2; $i++) {
+            $attempt = $this->scoredAttempt($student, $teacher, 50 + $i, 100);
+            $review = $service->submitReviewRequest($student, $attempt, 'older open #'.$i);
+            // Leave as pending; backdate so it's not in the recent 5.
+            $review->forceFill(['created_at' => now()->subDays(30 + $i)])->save();
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $attempt = $this->scoredAttempt($student, $teacher, 60 + $i, 100);
+            $review = $service->submitReviewRequest($student, $attempt, 'recent resolved #'.$i);
+            $service->resolveReview($ah, $review, 'ok');
+        }
+
+        $response = $this->actingAs($student)->get(route('portal.dashboard'));
+        $response->assertOk();
+        $response->assertSee('Open reviews');
+        $this->assertSame(2, $response->viewData('openReviewCount'));
+    }
+
     public function test_system_admin_cannot_decide_closed_review(): void
     {
         $sa = $this->systemAdmin();
