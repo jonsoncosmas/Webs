@@ -49,7 +49,7 @@ class DisciplineController extends Controller
 
         $subjects = User::query()
             ->with('role')
-            ->where('school_id', $user->school_id)
+            ->when(! $user->hasRole(Role::SYSTEM_ADMIN), fn ($q) => $q->where('school_id', $user->school_id))
             ->where('id', '!=', $user->id)
             ->orderBy('first_name')
             ->get();
