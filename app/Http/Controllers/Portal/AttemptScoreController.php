@@ -55,6 +55,9 @@ class AttemptScoreController extends Controller
         ]);
 
         $student = User::findOrFail($data['student_user_id']);
+        if (! $student->hasRole(Role::STUDENT)) {
+            abort(422, 'Selected user is not a student.');
+        }
         if ($exam->school_id !== $actor->school_id && ! $actor->hasRole(Role::SYSTEM_ADMIN)) {
             abort(403);
         }

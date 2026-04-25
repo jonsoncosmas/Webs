@@ -88,6 +88,6 @@
     @endif
 
     <div style="margin-top:16px;">
-        <a class="btn ghost" href="{{ route('portal.results') }}">Back to results</a>
+        <a class="btn ghost" href="{{ route('portal.results', ['student_id' => $attempt->student_user_id]) }}">Back to results</a>
     </div>
 @endsection

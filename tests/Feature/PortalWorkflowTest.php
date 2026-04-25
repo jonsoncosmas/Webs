@@ -436,6 +436,76 @@ class PortalWorkflowTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_score_entry_rejects_non_student_target(): void
+    {
+        $teacher = $this->user(Role::TEACHER);
+        $otherTeacher = $this->user(Role::TEACHER);
+        $exam = Exam::create([
+            'school_id' => $teacher->school_id,
+            'creator_id' => $teacher->id,
+            'creator_role_level' => $teacher->role->level,
+            'title' => 'Role Check Exam',
+            'subject' => 'Math',
+            'status' => Exam::STATUS_PUBLISHED,
+            'total_marks' => 100,
+        ]);
+
+        $this->actingAs($teacher)
+            ->post(route('portal.scores.store', $exam), [
+                'student_user_id' => $otherTeacher->id,
+                'score' => 70,
+                'total_marks' => 100,
+            ])
+            ->assertStatus(422);
+
+        $this->assertDatabaseMissing('exam_attempts', [
+            'exam_id' => $exam->id,
+            'student_user_id' => $otherTeacher->id,
+        ]);
+    }
+
+    public function test_parent_child_context_preserved_on_back_links(): void
+    {
+        $parent = $this->user(Role::PARENT_ROLE);
+        $mine = $this->user(Role::STUDENT);
+        $other = $this->user(Role::STUDENT);
+        $teacher = $this->user(Role::TEACHER);
+        $this->linkParent($parent, $mine, false);
+        $this->linkParent($parent, $other, true);
+
+        $attempt = $this->scoredAttempt($mine, $teacher);
+
+        // Dashboard for non-primary child
+        $response = $this->actingAs($parent)
+            ->get(route('portal.dashboard', ['student_id' => $mine->id]));
+        $response->assertOk();
+        $html = $response->getContent();
+        $expected = route('portal.results', ['student_id' => $mine->id]);
+        $this->assertStringContainsString((string) $expected, (string) $html);
+        // Result card deep-link should carry student_id too.
+        $showLink = route('portal.result.show', ['attempt' => $attempt->id, 'student_id' => $mine->id]);
+        $this->assertStringContainsString((string) $showLink, (string) $html);
+    }
+
+    public function test_result_show_back_link_uses_attempt_student(): void
+    {
+        $parent = $this->user(Role::PARENT_ROLE);
+        $student = $this->user(Role::STUDENT);
+        $teacher = $this->user(Role::TEACHER);
+        $this->linkParent($parent, $student);
+        $attempt = $this->scoredAttempt($student, $teacher);
+
+        $html = $this->actingAs($parent)
+            ->get(route('portal.result.show', $attempt))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString(
+            (string) route('portal.results', ['student_id' => $student->id]),
+            (string) $html,
+        );
+    }
+
     public function test_teacher_cannot_score_own_student_on_foreign_school_exam(): void
     {
         $teacher = $this->user(Role::TEACHER);

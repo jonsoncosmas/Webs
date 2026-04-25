@@ -53,7 +53,7 @@
             @else
                 <div class="grid" style="gap:8px;">
                     @foreach ($attempts->take(5) as $attempt)
-                        <a href="{{ route('portal.result.show', $attempt) }}"
+                        <a href="{{ route('portal.result.show', ['attempt' => $attempt, 'student_id' => $student->id]) }}"
                            style="display:grid; grid-template-columns:1fr auto; gap:8px; padding:10px 12px;
                                   border:1px solid rgba(15,23,42,0.08); border-radius:10px;
                                   background:rgba(255,255,255,0.75); text-decoration:none; color:inherit;">
@@ -72,7 +72,7 @@
                     @endforeach
                 </div>
                 <div style="margin-top:10px;">
-                    <a class="btn ghost" href="{{ route('portal.results') }}">All results →</a>
+                    <a class="btn ghost" href="{{ route('portal.results', request()->only('student_id')) }}">All results →</a>
                 </div>
             @endif
         </div>
