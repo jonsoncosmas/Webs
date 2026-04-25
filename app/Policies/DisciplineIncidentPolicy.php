@@ -58,11 +58,6 @@ class DisciplineIncidentPolicy
             return true;
         }
 
-        // Teachers can see incidents they witnessed in their school.
-        if ($user->hasRole(Role::TEACHER)) {
-            return $user->id === $incident->reported_by;
-        }
-
         return $user->hasRole(...self::VIEWERS);
     }
 
