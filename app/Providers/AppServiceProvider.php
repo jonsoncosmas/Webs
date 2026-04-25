@@ -4,13 +4,17 @@ namespace App\Providers;
 
 use App\Models\DisciplineIncident;
 use App\Models\Exam;
+use App\Models\ExamAttempt;
+use App\Models\ResultReviewRequest;
 use App\Models\StaffCertificate;
 use App\Models\StaffLeave;
 use App\Models\StaffProfile;
 use App\Models\Template;
 use App\Models\TemplateAssignment;
 use App\Policies\DisciplineIncidentPolicy;
+use App\Policies\ExamAttemptPolicy;
 use App\Policies\ExamPolicy;
+use App\Policies\ResultReviewRequestPolicy;
 use App\Policies\StaffCertificatePolicy;
 use App\Policies\StaffLeavePolicy;
 use App\Policies\StaffProfilePolicy;
@@ -35,5 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(StaffCertificate::class, StaffCertificatePolicy::class);
         Gate::policy(StaffLeave::class, StaffLeavePolicy::class);
         Gate::policy(DisciplineIncident::class, DisciplineIncidentPolicy::class);
+        Gate::policy(ExamAttempt::class, ExamAttemptPolicy::class);
+        Gate::policy(ResultReviewRequest::class, ResultReviewRequestPolicy::class);
     }
 }
