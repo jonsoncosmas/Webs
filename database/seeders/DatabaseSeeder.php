@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             DemoSchoolSeeder::class,
             TemplateSeeder::class,
             StaffSeeder::class,
+            DisciplineSeeder::class,
         ]);
     }
 }

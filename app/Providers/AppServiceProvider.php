@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\DisciplineIncident;
 use App\Models\Exam;
 use App\Models\StaffCertificate;
 use App\Models\StaffLeave;
 use App\Models\StaffProfile;
 use App\Models\Template;
 use App\Models\TemplateAssignment;
+use App\Policies\DisciplineIncidentPolicy;
 use App\Policies\ExamPolicy;
 use App\Policies\StaffCertificatePolicy;
 use App\Policies\StaffLeavePolicy;
@@ -32,5 +34,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(StaffProfile::class, StaffProfilePolicy::class);
         Gate::policy(StaffCertificate::class, StaffCertificatePolicy::class);
         Gate::policy(StaffLeave::class, StaffLeavePolicy::class);
+        Gate::policy(DisciplineIncident::class, DisciplineIncidentPolicy::class);
     }
 }

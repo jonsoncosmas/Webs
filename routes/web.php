@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Discipline\DisciplineController;
 use App\Http\Controllers\Exams\ExamController;
 use App\Http\Controllers\HR\StaffCertificateController;
 use App\Http\Controllers\HR\StaffController;
@@ -78,5 +79,14 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/hr/leaves/{leave}/approve', [StaffLeaveController::class, 'approve'])->name('hr.leaves.approve');
         Route::post('/hr/leaves/{leave}/reject', [StaffLeaveController::class, 'reject'])->name('hr.leaves.reject');
         Route::post('/hr/leaves/{leave}/cancel', [StaffLeaveController::class, 'cancel'])->name('hr.leaves.cancel');
+
+        // Discipline — incidents + behaviour/academics timeline.
+        Route::get('/discipline', [DisciplineController::class, 'index'])->name('discipline.index');
+        Route::get('/discipline/create', [DisciplineController::class, 'create'])->name('discipline.create');
+        Route::post('/discipline', [DisciplineController::class, 'store'])->name('discipline.store');
+        Route::get('/discipline/subjects/{subject}/timeline', [DisciplineController::class, 'timeline'])->name('discipline.timeline');
+        Route::get('/discipline/{incident}', [DisciplineController::class, 'show'])->name('discipline.show');
+        Route::post('/discipline/{incident}/resolve', [DisciplineController::class, 'resolve'])->name('discipline.resolve');
+        Route::post('/discipline/{incident}/dismiss', [DisciplineController::class, 'dismiss'])->name('discipline.dismiss');
     });
 });
