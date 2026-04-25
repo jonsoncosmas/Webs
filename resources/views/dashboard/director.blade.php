@@ -47,4 +47,13 @@
             <a class="btn" href="{{ route('assignments.create') }}">New assignment</a>
         </div>
     </div>
+
+    <div class="card" style="margin-top:16px;">
+        <h3>HR &amp; staff records</h3>
+        <p class="muted">Browse the staff directory, view profiles, certificates, and leave history.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a class="btn ghost" href="{{ route('hr.index') }}">Staff directory</a>
+            <a class="btn ghost" href="{{ route('hr.me') }}">My HR profile</a>
+        </div>
+    </div>
 @endsection

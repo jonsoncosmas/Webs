@@ -4,6 +4,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Exams\ExamController;
+use App\Http\Controllers\HR\StaffCertificateController;
+use App\Http\Controllers\HR\StaffController;
+use App\Http\Controllers\HR\StaffLeaveController;
 use App\Http\Controllers\Orion\OrionController;
 use App\Http\Controllers\Templates\TemplateAssignmentController;
 use App\Http\Controllers\Templates\TemplateController;
@@ -60,5 +63,20 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/assignments/{assignment}/ready', [TemplateAssignmentController::class, 'markReady'])->name('assignments.ready');
         Route::post('/assignments/{assignment}/reopen', [TemplateAssignmentController::class, 'reopen'])->name('assignments.reopen');
         Route::get('/assignments/{assignment}/print', [TemplateAssignmentController::class, 'print'])->name('assignments.print');
+
+        // HR / staff records.
+        Route::get('/hr/staff', [StaffController::class, 'index'])->name('hr.index');
+        Route::get('/hr/me', [StaffController::class, 'me'])->name('hr.me');
+        Route::get('/hr/staff/{subject}', [StaffController::class, 'show'])->name('hr.show');
+        Route::post('/hr/staff/{subject}/profile', [StaffController::class, 'updateProfile'])->name('hr.profile.update');
+        Route::post('/hr/staff/{subject}/suspend', [StaffController::class, 'suspend'])->name('hr.suspend');
+        Route::post('/hr/staff/{subject}/deactivate', [StaffController::class, 'deactivate'])->name('hr.deactivate');
+        Route::post('/hr/staff/{subject}/activate', [StaffController::class, 'activate'])->name('hr.activate');
+        Route::post('/hr/staff/{subject}/certificates', [StaffCertificateController::class, 'store'])->name('hr.certificates.store');
+        Route::post('/hr/certificates/{certificate}/archive', [StaffCertificateController::class, 'archive'])->name('hr.certificates.archive');
+        Route::post('/hr/staff/{subject}/leaves', [StaffLeaveController::class, 'store'])->name('hr.leaves.store');
+        Route::post('/hr/leaves/{leave}/approve', [StaffLeaveController::class, 'approve'])->name('hr.leaves.approve');
+        Route::post('/hr/leaves/{leave}/reject', [StaffLeaveController::class, 'reject'])->name('hr.leaves.reject');
+        Route::post('/hr/leaves/{leave}/cancel', [StaffLeaveController::class, 'cancel'])->name('hr.leaves.cancel');
     });
 });
