@@ -60,7 +60,7 @@ class ExamAttempt extends Model
 
     public function percentage(): ?float
     {
-        if (! $this->score || ! $this->total_marks || $this->total_marks <= 0) {
+        if ($this->score === null || ! $this->total_marks || $this->total_marks <= 0) {
             return null;
         }
 

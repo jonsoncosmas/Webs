@@ -436,6 +436,43 @@ class PortalWorkflowTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_teacher_cannot_score_own_student_on_foreign_school_exam(): void
+    {
+        $teacher = $this->user(Role::TEACHER);
+        $student = $this->user(Role::STUDENT);
+        $foreignExam = Exam::create([
+            'school_id' => $this->otherSchool->id,
+            'creator_id' => $teacher->id,
+            'creator_role_level' => $teacher->role->level,
+            'title' => 'Foreign Exam',
+            'subject' => 'Math',
+            'status' => Exam::STATUS_PUBLISHED,
+            'total_marks' => 100,
+        ]);
+
+        $this->actingAs($teacher)
+            ->post(route('portal.scores.store', $foreignExam), [
+                'student_user_id' => $student->id,
+                'score' => 50,
+                'total_marks' => 100,
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('exam_attempts', [
+            'exam_id' => $foreignExam->id,
+            'student_user_id' => $student->id,
+        ]);
+    }
+
+    public function test_percentage_reports_zero_for_zero_score(): void
+    {
+        $teacher = $this->user(Role::TEACHER);
+        $student = $this->user(Role::STUDENT);
+        $attempt = $this->scoredAttempt($student, $teacher, 0, 100);
+
+        $this->assertSame(0.0, $attempt->percentage());
+    }
+
     // ---------- System admin bypass ----------
 
     public function test_system_admin_can_view_any_attempt_and_review(): void
