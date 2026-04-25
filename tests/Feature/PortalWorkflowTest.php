@@ -573,6 +573,19 @@ class PortalWorkflowTest extends TestCase
 
     // ---------- System admin bypass ----------
 
+    public function test_system_admin_cannot_decide_closed_review(): void
+    {
+        $sa = $this->systemAdmin();
+        $ah = $this->user(Role::ACADEMIC_HEAD);
+        $student = $this->user(Role::STUDENT);
+        $teacher = $this->user(Role::TEACHER);
+        $attempt = $this->scoredAttempt($student, $teacher);
+        $review = app(PortalService::class)->submitReviewRequest($student, $attempt, 'Please re-check question 3.');
+        app(PortalService::class)->resolveReview($ah, $review, 'Done.');
+
+        $this->assertFalse($sa->can('decide', $review->fresh()));
+    }
+
     public function test_system_admin_can_view_any_attempt_and_review(): void
     {
         $sa = $this->systemAdmin();

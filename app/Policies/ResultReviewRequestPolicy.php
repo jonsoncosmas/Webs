@@ -74,15 +74,15 @@ class ResultReviewRequestPolicy
 
     public function decide(User $user, ResultReviewRequest $request): bool
     {
+        if (! $request->isOpen()) {
+            return false;
+        }
+
         if ($this->isSystemAdmin($user)) {
             return true;
         }
 
         if ($user->school_id !== $request->school_id) {
-            return false;
-        }
-
-        if (! $request->isOpen()) {
             return false;
         }
 
