@@ -105,6 +105,41 @@ class StaffProfilePolicy
         return $this->isSystemAdmin($user) || $user->hasRole(Role::HR);
     }
 
+    /**
+     * Suspend/deactivate a user's account. HR can act on non-protected roles;
+     * Director / Deputy Director / School Admin can act on everyone below them.
+     */
+    public function suspend(User $user, User $subject): bool
+    {
+        if ($this->isSystemAdmin($user)) {
+            return true;
+        }
+
+        if ($user->school_id !== $subject->school_id) {
+            return false;
+        }
+
+        // Never let someone suspend themselves through this policy.
+        if ($user->id === $subject->id) {
+            return false;
+        }
+
+        if ($user->hasRole(Role::HR)) {
+            return ! $this->isProtectedFromHr($subject);
+        }
+
+        if ($user->hasRole(Role::DIRECTOR, Role::DEPUTY_DIRECTOR, Role::SCHOOL_ADMIN)) {
+            return $user->outranks($subject);
+        }
+
+        return false;
+    }
+
+    public function activate(User $user, User $subject): bool
+    {
+        return $this->suspend($user, $subject);
+    }
+
     public function isProtectedFromHr(User $subject): bool
     {
         return $subject->role !== null && in_array($subject->role->slug, self::PROTECTED_FROM_HR, true);

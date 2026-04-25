@@ -69,6 +69,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/hr/me', [StaffController::class, 'me'])->name('hr.me');
         Route::get('/hr/staff/{subject}', [StaffController::class, 'show'])->name('hr.show');
         Route::post('/hr/staff/{subject}/profile', [StaffController::class, 'updateProfile'])->name('hr.profile.update');
+        Route::post('/hr/staff/{subject}/suspend', [StaffController::class, 'suspend'])->name('hr.suspend');
+        Route::post('/hr/staff/{subject}/deactivate', [StaffController::class, 'deactivate'])->name('hr.deactivate');
+        Route::post('/hr/staff/{subject}/activate', [StaffController::class, 'activate'])->name('hr.activate');
         Route::post('/hr/staff/{subject}/certificates', [StaffCertificateController::class, 'store'])->name('hr.certificates.store');
         Route::post('/hr/certificates/{certificate}/archive', [StaffCertificateController::class, 'archive'])->name('hr.certificates.archive');
         Route::post('/hr/staff/{subject}/leaves', [StaffLeaveController::class, 'store'])->name('hr.leaves.store');

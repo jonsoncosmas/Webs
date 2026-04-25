@@ -116,6 +116,24 @@ class StaffService
         return $leave;
     }
 
+    public function setStatus(User $actor, User $subject, string $status): User
+    {
+        $allowed = [User::STATUS_ACTIVE, User::STATUS_SUSPENDED, User::STATUS_DEACTIVATED];
+        if (! in_array($status, $allowed, true)) {
+            throw new \InvalidArgumentException("Invalid status: {$status}");
+        }
+
+        $previous = $subject->status;
+        $subject->update(['status' => $status]);
+
+        $this->logger->log('staff.status.changed', $subject, [
+            'from' => $previous,
+            'to' => $status,
+        ]);
+
+        return $subject;
+    }
+
     public function cancelLeave(User $actor, StaffLeave $leave): StaffLeave
     {
         $leave->update([

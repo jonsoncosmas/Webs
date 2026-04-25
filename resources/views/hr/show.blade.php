@@ -23,9 +23,46 @@
                 </p>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-                <span class="badge">{{ $subject->status }}</span>
+                <span class="badge"
+                      style="background:
+                        @switch($subject->status)
+                            @case('active') rgba(22,163,74,0.12) @break
+                            @case('suspended') rgba(217,119,6,0.12) @break
+                            @case('deactivated') rgba(15,23,42,0.08) @break
+                        @endswitch
+                        ; color:
+                        @switch($subject->status)
+                            @case('active') #15803d @break
+                            @case('suspended') #b45309 @break
+                            @case('deactivated') #475569 @break
+                        @endswitch
+                        ;">
+                    {{ $subject->status }}
+                </span>
                 @if (app(\App\Policies\StaffProfilePolicy::class)->isProtectedFromHr($subject))
                     <span class="muted" style="font-size:12px;">HR edits blocked for this role</span>
+                @endif
+
+                @if ($actor->can('suspend', [\App\Models\StaffProfile::class, $subject]))
+                    <div style="display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; justify-content:flex-end;">
+                        @if ($subject->status === 'active')
+                            <form method="POST" action="{{ route('hr.suspend', $subject) }}"
+                                  onsubmit="return confirm('Suspend {{ $subject->fullName() }}?');">
+                                @csrf
+                                <button class="btn ghost" type="submit">Suspend</button>
+                            </form>
+                            <form method="POST" action="{{ route('hr.deactivate', $subject) }}"
+                                  onsubmit="return confirm('Deactivate {{ $subject->fullName() }}? They will lose access.');">
+                                @csrf
+                                <button class="btn danger" type="submit">Deactivate</button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('hr.activate', $subject) }}">
+                                @csrf
+                                <button class="btn" type="submit">Reactivate</button>
+                            </form>
+                        @endif
+                    </div>
                 @endif
             </div>
         </div>

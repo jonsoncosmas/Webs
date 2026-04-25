@@ -112,6 +112,42 @@ class StaffController extends Controller
         return redirect()->route('hr.show', $subject)->with('status', 'Profile saved.');
     }
 
+    public function suspend(Request $request, User $subject, StaffService $service): RedirectResponse
+    {
+        $actor = $request->user();
+        if (! $actor->can('suspend', [StaffProfile::class, $subject])) {
+            abort(403);
+        }
+
+        $service->setStatus($actor, $subject, User::STATUS_SUSPENDED);
+
+        return redirect()->route('hr.show', $subject)->with('status', 'Staff suspended.');
+    }
+
+    public function deactivate(Request $request, User $subject, StaffService $service): RedirectResponse
+    {
+        $actor = $request->user();
+        if (! $actor->can('suspend', [StaffProfile::class, $subject])) {
+            abort(403);
+        }
+
+        $service->setStatus($actor, $subject, User::STATUS_DEACTIVATED);
+
+        return redirect()->route('hr.show', $subject)->with('status', 'Staff deactivated.');
+    }
+
+    public function activate(Request $request, User $subject, StaffService $service): RedirectResponse
+    {
+        $actor = $request->user();
+        if (! $actor->can('activate', [StaffProfile::class, $subject])) {
+            abort(403);
+        }
+
+        $service->setStatus($actor, $subject, User::STATUS_ACTIVE);
+
+        return redirect()->route('hr.show', $subject)->with('status', 'Staff reactivated.');
+    }
+
     private function authorizeView(User $actor, User $subject): void
     {
         if ($actor->can('viewUser', [StaffProfile::class, $subject])) {

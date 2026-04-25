@@ -362,6 +362,73 @@ class HRWorkflowTest extends TestCase
         ]);
     }
 
+    // ---------- Suspend / deactivate ----------
+
+    public function test_hr_can_suspend_teacher(): void
+    {
+        $hr = $this->user(Role::HR);
+        $teacher = $this->user(Role::TEACHER);
+
+        $this->assertTrue($hr->can('suspend', [StaffProfile::class, $teacher]));
+
+        $this->actingAs($hr)
+            ->post(route('hr.suspend', $teacher))
+            ->assertRedirect(route('hr.show', $teacher));
+
+        $this->assertSame(User::STATUS_SUSPENDED, $teacher->fresh()->status);
+    }
+
+    public function test_hr_cannot_suspend_director(): void
+    {
+        $hr = $this->user(Role::HR);
+        $director = $this->user(Role::DIRECTOR);
+
+        $this->assertFalse($hr->can('suspend', [StaffProfile::class, $director]));
+        $this->actingAs($hr)->post(route('hr.suspend', $director))->assertForbidden();
+    }
+
+    public function test_hr_cannot_deactivate_school_admin(): void
+    {
+        $hr = $this->user(Role::HR);
+        $admin = $this->user(Role::SCHOOL_ADMIN);
+
+        $this->actingAs($hr)->post(route('hr.deactivate', $admin))->assertForbidden();
+    }
+
+    public function test_director_can_deactivate_school_admin(): void
+    {
+        $director = $this->user(Role::DIRECTOR);
+        $admin = $this->user(Role::SCHOOL_ADMIN);
+
+        $this->actingAs($director)->post(route('hr.deactivate', $admin))->assertRedirect();
+        $this->assertSame(User::STATUS_DEACTIVATED, $admin->fresh()->status);
+    }
+
+    public function test_reactivate_restores_active_status(): void
+    {
+        $hr = $this->user(Role::HR);
+        $teacher = $this->user(Role::TEACHER);
+        $teacher->update(['status' => User::STATUS_SUSPENDED]);
+
+        $this->actingAs($hr)->post(route('hr.activate', $teacher))->assertRedirect();
+        $this->assertSame(User::STATUS_ACTIVE, $teacher->fresh()->status);
+    }
+
+    public function test_user_cannot_suspend_self(): void
+    {
+        $hr = $this->user(Role::HR);
+
+        $this->assertFalse($hr->can('suspend', [StaffProfile::class, $hr]));
+    }
+
+    public function test_teacher_cannot_suspend_another_teacher(): void
+    {
+        $a = $this->user(Role::TEACHER);
+        $b = $this->user(Role::TEACHER);
+
+        $this->assertFalse($a->can('suspend', [StaffProfile::class, $b]));
+    }
+
     public function test_leave_lifecycle_via_http(): void
     {
         $teacher = $this->user(Role::TEACHER);
