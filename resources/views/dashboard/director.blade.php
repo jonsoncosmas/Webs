@@ -48,12 +48,22 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
-        <h3>HR &amp; staff records</h3>
-        <p class="muted">Browse the staff directory, view profiles, certificates, and leave history.</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <a class="btn ghost" href="{{ route('hr.index') }}">Staff directory</a>
-            <a class="btn ghost" href="{{ route('hr.me') }}">My HR profile</a>
+    <div class="grid cols-2" style="margin-top:16px; gap:16px;">
+        <div class="card">
+            <h3>HR &amp; staff records</h3>
+            <p class="muted">Browse the staff directory, view profiles, certificates, and leave history.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a class="btn ghost" href="{{ route('hr.index') }}">Staff directory</a>
+                <a class="btn ghost" href="{{ route('hr.me') }}">My HR profile</a>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Discipline &amp; behaviour</h3>
+            <p class="muted">Log incidents, resolve reports, and overlay behaviour against academic activity.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a class="btn ghost" href="{{ route('discipline.index') }}">Incidents</a>
+                <a class="btn" href="{{ route('discipline.create') }}">Log incident</a>
+            </div>
         </div>
     </div>
 @endsection

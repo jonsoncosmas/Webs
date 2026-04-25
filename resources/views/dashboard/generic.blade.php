@@ -28,6 +28,12 @@
                     <a class="btn ghost" href="{{ route('hr.index') }}">Staff directory</a>
                 @endcan
                 <a class="btn ghost" href="{{ route('hr.me') }}">My HR profile</a>
+                @can('viewAny', App\Models\DisciplineIncident::class)
+                    <a class="btn ghost" href="{{ route('discipline.index') }}">Discipline</a>
+                @endcan
+                @can('create', App\Models\DisciplineIncident::class)
+                    <a class="btn ghost" href="{{ route('discipline.create') }}">Log incident</a>
+                @endcan
             </div>
             <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>
