@@ -43,6 +43,7 @@ class DemoSchoolSeeder extends Seeder
             ['Mary', 'Joseph', 'Haule', Role::HR],
             ['Samuel', 'Kweka', 'Mbise', Role::DISCIPLINE_HEAD],
             ['Joyce', 'Neema', 'Kitomari', Role::STUDENT],
+            ['Peter', 'Joseph', 'Kitomari', Role::PARENT_ROLE],
         ];
 
         foreach ($people as [$first, $middle, $last, $slug]) {

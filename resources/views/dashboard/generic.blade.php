@@ -34,6 +34,9 @@
                 @can('create', App\Models\DisciplineIncident::class)
                     <a class="btn ghost" href="{{ route('discipline.create') }}">Log incident</a>
                 @endcan
+                @can('viewAny', App\Models\ResultReviewRequest::class)
+                    <a class="btn ghost" href="{{ route('academic.reviews.index') }}">Review inbox</a>
+                @endcan
             </div>
             <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>

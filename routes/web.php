@@ -9,6 +9,9 @@ use App\Http\Controllers\HR\StaffCertificateController;
 use App\Http\Controllers\HR\StaffController;
 use App\Http\Controllers\HR\StaffLeaveController;
 use App\Http\Controllers\Orion\OrionController;
+use App\Http\Controllers\Portal\AttemptScoreController;
+use App\Http\Controllers\Portal\PortalController;
+use App\Http\Controllers\Portal\ReviewInboxController;
 use App\Http\Controllers\Templates\TemplateAssignmentController;
 use App\Http\Controllers\Templates\TemplateController;
 use Illuminate\Support\Facades\Route;
@@ -88,5 +91,24 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/discipline/{incident}', [DisciplineController::class, 'show'])->name('discipline.show');
         Route::post('/discipline/{incident}/resolve', [DisciplineController::class, 'resolve'])->name('discipline.resolve');
         Route::post('/discipline/{incident}/dismiss', [DisciplineController::class, 'dismiss'])->name('discipline.dismiss');
+
+        // Student / Parent portal.
+        Route::get('/portal', [PortalController::class, 'dashboard'])->name('portal.dashboard');
+        Route::get('/portal/exams', [PortalController::class, 'exams'])->name('portal.exams');
+        Route::get('/portal/results', [PortalController::class, 'results'])->name('portal.results');
+        Route::get('/portal/results/{attempt}', [PortalController::class, 'showResult'])->name('portal.result.show');
+        Route::post('/portal/results/{attempt}/review', [PortalController::class, 'submitReview'])->name('portal.result.review');
+        Route::get('/portal/reviews', [PortalController::class, 'reviews'])->name('portal.reviews');
+
+        // Academic Head review inbox.
+        Route::get('/academic/reviews', [ReviewInboxController::class, 'index'])->name('academic.reviews.index');
+        Route::get('/academic/reviews/{review}', [ReviewInboxController::class, 'show'])->name('academic.reviews.show');
+        Route::post('/academic/reviews/{review}/acknowledge', [ReviewInboxController::class, 'acknowledge'])->name('academic.reviews.acknowledge');
+        Route::post('/academic/reviews/{review}/resolve', [ReviewInboxController::class, 'resolve'])->name('academic.reviews.resolve');
+        Route::post('/academic/reviews/{review}/reject', [ReviewInboxController::class, 'reject'])->name('academic.reviews.reject');
+
+        // Teacher / staff score entry for an exam.
+        Route::get('/exams/{exam}/scores', [AttemptScoreController::class, 'create'])->name('portal.scores.create');
+        Route::post('/exams/{exam}/scores', [AttemptScoreController::class, 'store'])->name('portal.scores.store');
     });
 });

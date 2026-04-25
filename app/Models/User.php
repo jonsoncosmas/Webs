@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -71,6 +72,37 @@ class User extends Authenticatable
     public function leaves(): HasMany
     {
         return $this->hasMany(StaffLeave::class);
+    }
+
+    /**
+     * Parents of this user (when this user is a student).
+     */
+    public function parents(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            self::class,
+            'parent_student_links',
+            'student_user_id',
+            'parent_user_id'
+        )->withPivot(['relationship', 'is_primary'])->withTimestamps();
+    }
+
+    /**
+     * Children of this user (when this user is a parent).
+     */
+    public function children(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            self::class,
+            'parent_student_links',
+            'parent_user_id',
+            'student_user_id'
+        )->withPivot(['relationship', 'is_primary'])->withTimestamps();
+    }
+
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class, 'student_user_id');
     }
 
     public function fullName(): string
