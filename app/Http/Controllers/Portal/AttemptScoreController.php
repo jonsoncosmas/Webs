@@ -27,7 +27,7 @@ class AttemptScoreController extends Controller
 
         $students = User::query()
             ->whereHas('role', fn ($q) => $q->where('slug', Role::STUDENT))
-            ->when(! $actor->hasRole(Role::SYSTEM_ADMIN), fn ($q) => $q->where('school_id', $actor->school_id))
+            ->where('school_id', $exam->school_id)
             ->orderBy('first_name')
             ->get();
 
