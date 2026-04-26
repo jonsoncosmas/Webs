@@ -248,9 +248,29 @@ class PackagesAndBusWorkflowTest extends TestCase
                 'plate_number' => 'T-999-XYZ',
                 'bus_route_id' => $foreignRoute->id,
             ])
-            ->assertSessionHasErrors('plate_number');
+            ->assertSessionHasErrors('bus_route_id');
 
         $this->assertDatabaseMissing('bus_vehicles', ['plate_number' => 'T-999-XYZ']);
+    }
+
+    public function test_cross_school_driver_assignment_errors_on_driver_field(): void
+    {
+        // Regression: route/driver school-mismatch errors must surface on the
+        // correct field, not on plate_number, so the form highlights the right input.
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        $otherElite = School::create([
+            'name' => 'Other Elite', 'slug' => 'other-elite-driver', 'status' => 'active',
+            'package_id' => Package::where('slug', Package::ELITE)->value('id'),
+        ]);
+        $foreignDriver = $this->user(Role::TEACHER, $otherElite);
+
+        $this->actingAs($director)
+            ->post('/bus/vehicles', [
+                'plate_number' => 'T-DRV-001',
+                'driver_user_id' => $foreignDriver->id,
+            ])
+            ->assertSessionHasErrors('driver_user_id')
+            ->assertSessionDoesntHaveErrors('plate_number');
     }
 
     public function test_director_can_record_vehicle_position(): void

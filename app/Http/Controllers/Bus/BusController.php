@@ -102,8 +102,14 @@ class BusController extends Controller
             ],
             'label' => ['nullable', 'string', 'max:120'],
             'capacity' => ['nullable', 'integer', 'min:0', 'max:200'],
-            'bus_route_id' => ['nullable', 'integer', 'exists:bus_routes,id'],
-            'driver_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'bus_route_id' => [
+                'nullable', 'integer',
+                Rule::exists('bus_routes', 'id')->where('school_id', $school->id),
+            ],
+            'driver_user_id' => [
+                'nullable', 'integer',
+                Rule::exists('users', 'id')->where('school_id', $school->id),
+            ],
         ]);
 
         try {
