@@ -253,6 +253,43 @@ class PackagesAndBusWorkflowTest extends TestCase
         $this->assertDatabaseMissing('bus_vehicles', ['plate_number' => 'T-999-XYZ']);
     }
 
+    public function test_service_throws_field_specific_exception_for_route_mismatch(): void
+    {
+        // Direct service test — exercises the catch path in BusController without
+        // going through Rule::exists validation. Confirms the field name is preserved
+        // so callers can attribute the error correctly.
+        $service = app(\App\Services\Bus\BusTrackingService::class);
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        $other = School::create([
+            'name' => 'Other Elite', 'slug' => 'other-elite-svc', 'status' => 'active',
+            'package_id' => Package::where('slug', Package::ELITE)->value('id'),
+        ]);
+        $foreignRoute = BusRoute::create([
+            'school_id' => $other->id, 'name' => 'Foreign', 'status' => BusRoute::STATUS_ACTIVE,
+        ]);
+
+        try {
+            $service->createVehicle($director, $this->eliteSchool, [
+                'plate_number' => 'T-SVC-1',
+                'bus_route_id' => $foreignRoute->id,
+            ]);
+            $this->fail('Expected BusFieldException for route mismatch.');
+        } catch (\App\Exceptions\BusFieldException $e) {
+            $this->assertSame('bus_route_id', $e->field);
+        }
+
+        $foreignDriver = $this->user(Role::TEACHER, $other);
+        try {
+            $service->createVehicle($director, $this->eliteSchool, [
+                'plate_number' => 'T-SVC-2',
+                'driver_user_id' => $foreignDriver->id,
+            ]);
+            $this->fail('Expected BusFieldException for driver mismatch.');
+        } catch (\App\Exceptions\BusFieldException $e) {
+            $this->assertSame('driver_user_id', $e->field);
+        }
+    }
+
     public function test_cross_school_driver_assignment_errors_on_driver_field(): void
     {
         // Regression: route/driver school-mismatch errors must surface on the

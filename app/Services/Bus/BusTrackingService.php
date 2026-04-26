@@ -2,6 +2,7 @@
 
 namespace App\Services\Bus;
 
+use App\Exceptions\BusFieldException;
 use App\Models\BusRoute;
 use App\Models\BusStop;
 use App\Models\BusVehicle;
@@ -69,7 +70,7 @@ class BusTrackingService
         if ($routeId !== null) {
             $route = BusRoute::find($routeId);
             if (! $route || $route->school_id !== $school->id) {
-                throw new InvalidArgumentException('Route does not belong to this school.');
+                throw new BusFieldException('bus_route_id', 'Route does not belong to this school.');
             }
         }
 
@@ -77,7 +78,7 @@ class BusTrackingService
         if ($driverId !== null) {
             $driver = User::find($driverId);
             if (! $driver || $driver->school_id !== $school->id) {
-                throw new InvalidArgumentException('Driver does not belong to this school.');
+                throw new BusFieldException('driver_user_id', 'Driver does not belong to this school.');
             }
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Bus;
 
+use App\Exceptions\BusFieldException;
 use App\Http\Controllers\Controller;
 use App\Models\BusRoute;
 use App\Models\BusVehicle;
@@ -114,6 +115,8 @@ class BusController extends Controller
 
         try {
             $this->service->createVehicle($request->user(), $school, $data);
+        } catch (BusFieldException $e) {
+            return back()->withErrors([$e->field => $e->getMessage()])->withInput();
         } catch (InvalidArgumentException $e) {
             return back()->withErrors(['plate_number' => $e->getMessage()])->withInput();
         }
