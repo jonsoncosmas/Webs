@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\DashboardController;
@@ -110,5 +111,11 @@ Route::middleware(['auth', 'active'])->group(function () {
         // Teacher / staff score entry for an exam.
         Route::get('/exams/{exam}/scores', [AttemptScoreController::class, 'create'])->name('portal.scores.create');
         Route::post('/exams/{exam}/scores', [AttemptScoreController::class, 'store'])->name('portal.scores.store');
+
+        // Analytics dashboards (school overview, exam KPIs, discipline KPIs, per-student deep-dive).
+        Route::get('/analytics', [AnalyticsController::class, 'overview'])->name('analytics.overview');
+        Route::get('/analytics/exams', [AnalyticsController::class, 'exams'])->name('analytics.exams');
+        Route::get('/analytics/discipline', [AnalyticsController::class, 'discipline'])->name('analytics.discipline');
+        Route::get('/analytics/students/{user}', [AnalyticsController::class, 'student'])->name('analytics.student');
     });
 });

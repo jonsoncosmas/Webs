@@ -11,6 +11,7 @@ use App\Models\StaffLeave;
 use App\Models\StaffProfile;
 use App\Models\Template;
 use App\Models\TemplateAssignment;
+use App\Policies\AnalyticsPolicy;
 use App\Policies\DisciplineIncidentPolicy;
 use App\Policies\ExamAttemptPolicy;
 use App\Policies\ExamPolicy;
@@ -41,5 +42,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(DisciplineIncident::class, DisciplineIncidentPolicy::class);
         Gate::policy(ExamAttempt::class, ExamAttemptPolicy::class);
         Gate::policy(ResultReviewRequest::class, ResultReviewRequestPolicy::class);
+
+        Gate::define('analytics.view-school', [AnalyticsPolicy::class, 'viewSchool']);
+        Gate::define('analytics.view-student', [AnalyticsPolicy::class, 'viewStudent']);
     }
 }
