@@ -23,7 +23,7 @@
                 </p>
                 <ul style="margin:8px 0 0 0; padding-left:18px;">
                     @foreach ($package->features ?? [] as $feature => $on)
-                        @if ($on)
+                        @if ($on && $feature !== 'bus_tracking')
                             <li>{{ str_replace('_', ' ', $feature) }}</li>
                         @endif
                     @endforeach

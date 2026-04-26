@@ -17,7 +17,7 @@
             <h3>Active features</h3>
             <ul style="margin:8px 0 0 0; padding-left:18px;">
                 @foreach ($school->package->features ?? [] as $feature => $on)
-                    @if ($on)
+                    @if ($on && $feature !== 'bus_tracking')
                         <li>{{ ucwords(str_replace('_', ' ', $feature)) }}</li>
                     @endif
                 @endforeach

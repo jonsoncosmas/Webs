@@ -376,6 +376,25 @@ class PackagesAndBusWorkflowTest extends TestCase
         $this->actingAs($admin)->get("/bus?school_id={$this->proSchool->id}")->assertOk();
     }
 
+    // ---------- Regression: bus tracking de-duplication on package + subscription cards ----------
+
+    public function test_packages_index_lists_bus_tracking_only_once_for_elite(): void
+    {
+        $body = $this->actingAs($this->systemAdmin())->get('/packages')->assertOk()->getContent();
+        // Elite is the only package showing the bold "Bus tracking" line item; the generic
+        // feature loop must skip it so it doesn't appear twice.
+        $this->assertSame(1, substr_count(strtolower($body), '>bus tracking</'),
+            'Elite package card must list "Bus tracking" exactly once.');
+    }
+
+    public function test_school_subscription_lists_bus_tracking_only_once_for_elite(): void
+    {
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        $body = $this->actingAs($director)->get('/school/package')->assertOk()->getContent();
+        $this->assertSame(1, substr_count(strtolower($body), 'bus tracking'),
+            'Elite school subscription card must mention "Bus tracking" exactly once.');
+    }
+
     // ---------- Regression: lat/lng = 0 coordinates and XSS-safe map rendering ----------
 
     public function test_stop_at_zero_coordinates_still_renders_position(): void
