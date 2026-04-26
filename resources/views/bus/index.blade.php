@@ -9,7 +9,8 @@
             <p class="muted" style="margin:4px 0 0 0;">{{ $school->name }} · Elite feature</p>
         </div>
         <div style="margin-left:auto; display:flex; gap:8px;">
-            <a class="btn ghost" href="{{ route('bus.map') }}">Live map</a>
+            <a class="btn ghost"
+               href="{{ route('bus.map', auth()->user()->school_id ? [] : ['school_id' => $school->id]) }}">Live map</a>
         </div>
     </div>
 
@@ -32,6 +33,9 @@
             <h3 style="margin-top:0;">New route</h3>
             <form method="POST" action="{{ route('bus.routes.store') }}">
                 @csrf
+                @unless (auth()->user()->school_id)
+                    <input type="hidden" name="school_id" value="{{ $school->id }}">
+                @endunless
                 <label>Name <input name="name" required maxlength="120" style="width:100%; padding:6px;"></label>
                 <label>Code (optional) <input name="code" maxlength="32" style="width:100%; padding:6px;"></label>
                 <label>Description (optional)
@@ -44,6 +48,9 @@
             <h3 style="margin-top:0;">New vehicle</h3>
             <form method="POST" action="{{ route('bus.vehicles.store') }}">
                 @csrf
+                @unless (auth()->user()->school_id)
+                    <input type="hidden" name="school_id" value="{{ $school->id }}">
+                @endunless
                 <label>Plate number <input name="plate_number" required maxlength="32"
                                             style="width:100%; padding:6px;"></label>
                 <label>Label (optional) <input name="label" maxlength="120" style="width:100%; padding:6px;"></label>

@@ -399,6 +399,55 @@ class PackagesAndBusWorkflowTest extends TestCase
             ->assertSee('(0, 0)');
     }
 
+    public function test_system_admin_forms_propagate_school_id(): void
+    {
+        // Regression: System Admin viewing /bus?school_id=X must see forms that submit
+        // school_id back so storeRoute / storeVehicle don't 404 (they have no school of their own).
+        $admin = $this->systemAdmin();
+        $body = $this->actingAs($admin)
+            ->get("/bus?school_id={$this->eliteSchool->id}")
+            ->assertOk()
+            ->getContent();
+
+        $hidden = '<input type="hidden" name="school_id" value="'.$this->eliteSchool->id.'">';
+        $this->assertSame(
+            2,
+            substr_count($body, $hidden),
+            'Both the new-route and new-vehicle forms must carry the school_id.'
+        );
+        $this->assertStringContainsString(
+            '/bus/map?school_id='.$this->eliteSchool->id,
+            $body,
+            'The Live map link must propagate school_id for System Admin.'
+        );
+    }
+
+    public function test_system_admin_can_create_route_via_posted_school_id(): void
+    {
+        $admin = $this->systemAdmin();
+        $this->actingAs($admin)
+            ->post('/bus/routes', [
+                'school_id' => $this->eliteSchool->id,
+                'name' => 'Sysadmin-created',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('bus_routes', [
+            'school_id' => $this->eliteSchool->id,
+            'name' => 'Sysadmin-created',
+        ]);
+    }
+
+    public function test_school_user_does_not_emit_school_id_hidden_input(): void
+    {
+        // For non-admin users we don't render the hidden field — their school is
+        // resolved from $actor->school regardless, and we don't want them to spoof.
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        $body = $this->actingAs($director)->get('/bus')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('name="school_id"', $body);
+    }
+
     public function test_map_does_not_emit_raw_script_from_vehicle_label(): void
     {
         $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
