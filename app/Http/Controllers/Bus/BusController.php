@@ -10,6 +10,7 @@ use App\Models\School;
 use App\Services\Bus\BusTrackingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use InvalidArgumentException;
 
@@ -59,7 +60,10 @@ class BusController extends Controller
         $this->authorize('manageSchool', [BusRoute::class, $school]);
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
+            'name' => [
+                'required', 'string', 'max:120',
+                Rule::unique('bus_routes', 'name')->where('school_id', $school->id),
+            ],
             'code' => ['nullable', 'string', 'max:32'],
             'description' => ['nullable', 'string', 'max:500'],
         ]);
@@ -92,7 +96,10 @@ class BusController extends Controller
         $this->authorize('manageSchool', [BusRoute::class, $school]);
 
         $data = $request->validate([
-            'plate_number' => ['required', 'string', 'max:32'],
+            'plate_number' => [
+                'required', 'string', 'max:32',
+                Rule::unique('bus_vehicles', 'plate_number')->where('school_id', $school->id),
+            ],
             'label' => ['nullable', 'string', 'max:120'],
             'capacity' => ['nullable', 'integer', 'min:0', 'max:200'],
             'bus_route_id' => ['nullable', 'integer', 'exists:bus_routes,id'],

@@ -376,6 +376,61 @@ class PackagesAndBusWorkflowTest extends TestCase
         $this->actingAs($admin)->get("/bus?school_id={$this->proSchool->id}")->assertOk();
     }
 
+    // ---------- Regression: scoped uniqueness on route name + plate number ----------
+
+    public function test_duplicate_route_name_in_same_school_returns_validation_error(): void
+    {
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        BusRoute::create([
+            'school_id' => $this->eliteSchool->id,
+            'name' => 'Loop A',
+            'status' => BusRoute::STATUS_ACTIVE,
+        ]);
+
+        $this->actingAs($director)
+            ->post('/bus/routes', ['name' => 'Loop A'])
+            ->assertSessionHasErrors('name');
+
+        // Same name in a different school is still allowed.
+        $other = School::create([
+            'name' => 'Other Elite', 'slug' => 'other-elite', 'status' => 'active',
+            'package_id' => Package::where('slug', Package::ELITE)->value('id'),
+        ]);
+        $otherDirector = $this->user(Role::DIRECTOR, $other);
+        $this->actingAs($otherDirector)
+            ->post('/bus/routes', ['name' => 'Loop A'])
+            ->assertRedirect();
+        $this->assertDatabaseHas('bus_routes', ['school_id' => $other->id, 'name' => 'Loop A']);
+    }
+
+    public function test_duplicate_plate_number_in_same_school_returns_validation_error(): void
+    {
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        BusVehicle::create([
+            'school_id' => $this->eliteSchool->id,
+            'plate_number' => 'T-DUP-001',
+            'capacity' => 0,
+            'status' => BusVehicle::STATUS_ACTIVE,
+        ]);
+
+        $this->actingAs($director)
+            ->post('/bus/vehicles', ['plate_number' => 'T-DUP-001'])
+            ->assertSessionHasErrors('plate_number');
+
+        // Same plate in a different school is still allowed.
+        $other = School::create([
+            'name' => 'Other Elite', 'slug' => 'other-elite', 'status' => 'active',
+            'package_id' => Package::where('slug', Package::ELITE)->value('id'),
+        ]);
+        $otherDirector = $this->user(Role::DIRECTOR, $other);
+        $this->actingAs($otherDirector)
+            ->post('/bus/vehicles', ['plate_number' => 'T-DUP-001'])
+            ->assertRedirect();
+        $this->assertDatabaseHas('bus_vehicles', [
+            'school_id' => $other->id, 'plate_number' => 'T-DUP-001',
+        ]);
+    }
+
     // ---------- Regression: bus tracking de-duplication on package + subscription cards ----------
 
     public function test_packages_index_lists_bus_tracking_only_once_for_elite(): void
