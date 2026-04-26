@@ -202,6 +202,7 @@ class AnalyticsService
 
         $studentsWithIncidents = DisciplineIncident::query()
             ->where('school_id', $school->id)
+            ->where('status', DisciplineIncident::STATUS_OPEN)
             ->whereIn('category', $negativeCategories)
             ->where('subject_role', Role::STUDENT)
             ->pluck('subject_id')

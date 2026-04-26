@@ -302,6 +302,24 @@ class AnalyticsWorkflowTest extends TestCase
         $this->assertSame(80.0, $c['clean']['avg_pct']);
     }
 
+    public function test_correlation_excludes_resolved_or_dismissed_incidents(): void
+    {
+        $head = $this->user(Role::DISCIPLINE_HEAD);
+        $teacher = $this->user(Role::TEACHER);
+        $student = $this->user(Role::STUDENT);
+
+        $incident = $this->incident($head, $student, DisciplineIncident::CATEGORY_MAJOR, 4);
+        app(DisciplineService::class)->resolve($head, $incident, 'cleared');
+        $this->scoredAttempt($student, $teacher, 90, 100);
+
+        $c = app(AnalyticsService::class)->behaviourAcademicsCorrelation($this->school);
+
+        // Resolved incident should not flag the student.
+        $this->assertSame(0, $c['with_incidents']['count']);
+        $this->assertSame(1, $c['clean']['count']);
+        $this->assertSame(90.0, $c['clean']['avg_pct']);
+    }
+
     public function test_correlation_excludes_commendations_from_flagged_set(): void
     {
         $head = $this->user(Role::DISCIPLINE_HEAD);
