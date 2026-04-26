@@ -137,7 +137,7 @@ class AnalyticsService
         return Exam::query()
             ->where('school_id', $school->id)
             ->where('status', Exam::STATUS_PUBLISHED)
-            ->selectRaw('COALESCE(subject, "Unspecified") as subject, COUNT(*) as c')
+            ->selectRaw("COALESCE(subject, 'Unspecified') as subject, COUNT(*) as c")
             ->groupBy('subject')
             ->orderByDesc('c')
             ->get()
