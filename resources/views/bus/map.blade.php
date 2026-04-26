@@ -23,19 +23,41 @@
             <p class="muted" style="margin:0;">No active vehicles to plot.</p>
         </div>
     @else
+        @php
+            $busData = $vehicles->map(fn ($v) => [
+                'plate' => $v->plate_number,
+                'label' => $v->label,
+                'route' => $v->route?->name,
+                'lat' => $v->last_latitude,
+                'lng' => $v->last_longitude,
+            ])->values();
+        @endphp
         @if ($apiKey)
             <div id="bus-map" style="width:100%; height:480px; margin-top:12px; border-radius:12px;
                                      border:1px solid rgba(15,23,42,0.08);"></div>
             <script>
-                window.somaliteBuses = @json($vehicles->map(fn ($v) => [
-                    'plate' => $v->plate_number,
-                    'label' => $v->label,
-                    'route' => $v->route?->name,
-                    'lat' => $v->last_latitude,
-                    'lng' => $v->last_longitude,
-                ])->values());
+                window.somaliteBuses = @json($busData);
                 function initSomaliteMap() {
-                    var withPositions = window.somaliteBuses.filter(function (b) { return b.lat && b.lng; });
+                    function buildInfoNode(bus) {
+                        // Build via DOM nodes + textContent so vehicle fields can never be
+                        // interpreted as HTML (defends against stored XSS via plate/label/route).
+                        var root = document.createElement('div');
+                        var head = document.createElement('strong');
+                        head.textContent = bus.plate;
+                        root.appendChild(head);
+                        if (bus.route) {
+                            root.appendChild(document.createElement('br'));
+                            root.appendChild(document.createTextNode('Route: ' + bus.route));
+                        }
+                        if (bus.label) {
+                            root.appendChild(document.createElement('br'));
+                            root.appendChild(document.createTextNode(bus.label));
+                        }
+                        return root;
+                    }
+                    var withPositions = window.somaliteBuses.filter(function (b) {
+                        return b.lat != null && b.lng != null;
+                    });
                     var center = withPositions.length
                         ? { lat: parseFloat(withPositions[0].lat), lng: parseFloat(withPositions[0].lng) }
                         : { lat: -6.7924, lng: 39.2083 }; // Dar es Salaam fallback
@@ -48,11 +70,7 @@
                             map: map,
                             title: b.plate + (b.label ? ' — ' + b.label : ''),
                         });
-                        var info = new google.maps.InfoWindow({
-                            content: '<strong>' + b.plate + '</strong>'
-                                + (b.route ? '<br>Route: ' + b.route : '')
-                                + (b.label ? '<br>' + b.label : ''),
-                        });
+                        var info = new google.maps.InfoWindow({ content: buildInfoNode(b) });
                         m.addListener('click', function () { info.open(map, m); });
                     });
                 }

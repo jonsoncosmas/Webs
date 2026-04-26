@@ -102,7 +102,7 @@
                                 @foreach ($route->stops as $stop)
                                     <li>
                                         {{ $stop->name }}
-                                        @if ($stop->latitude && $stop->longitude)
+                                        @if ($stop->latitude !== null && $stop->longitude !== null)
                                             <span class="muted" style="font-size:12px;">
                                                 ({{ $stop->latitude }}, {{ $stop->longitude }})
                                             </span>

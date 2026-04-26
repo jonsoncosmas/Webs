@@ -375,4 +375,46 @@ class PackagesAndBusWorkflowTest extends TestCase
         $admin = $this->systemAdmin();
         $this->actingAs($admin)->get("/bus?school_id={$this->proSchool->id}")->assertOk();
     }
+
+    // ---------- Regression: lat/lng = 0 coordinates and XSS-safe map rendering ----------
+
+    public function test_stop_at_zero_coordinates_still_renders_position(): void
+    {
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        $route = BusRoute::create([
+            'school_id' => $this->eliteSchool->id,
+            'name' => 'Equator Loop',
+            'status' => BusRoute::STATUS_ACTIVE,
+        ]);
+        $route->stops()->create([
+            'name' => 'Equator Stop',
+            'latitude' => 0,
+            'longitude' => 0,
+            'position' => 1,
+        ]);
+
+        $this->actingAs($director)->get('/bus')
+            ->assertOk()
+            ->assertSee('Equator Stop')
+            ->assertSee('(0, 0)');
+    }
+
+    public function test_map_does_not_emit_raw_script_from_vehicle_label(): void
+    {
+        $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
+        BusVehicle::create([
+            'school_id' => $this->eliteSchool->id,
+            'plate_number' => 'XSS-TEST',
+            'label' => '<script>alert(1)</script>',
+            'capacity' => 0,
+            'status' => BusVehicle::STATUS_ACTIVE,
+        ]);
+
+        $response = $this->actingAs($director)->get('/bus/map')->assertOk();
+        $body = $response->getContent();
+
+        // The label is embedded via @json into a JS literal, which escapes < and >
+        // so the raw "<script>" tag must not appear inline. The escaped form is fine.
+        $this->assertStringNotContainsString('<script>alert(1)</script>', $body);
+    }
 }
