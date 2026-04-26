@@ -53,4 +53,12 @@
             <a class="btn" href="{{ route('templates.create') }}">New template</a>
         </div>
     </div>
+
+    <div class="card" style="margin-top:16px;">
+        <h3>Packages</h3>
+        <p class="muted">Catalog of subscription tiers. Assign or upgrade schools.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a class="btn" href="{{ route('packages.index') }}">Manage packages</a>
+        </div>
+    </div>
 @endsection
