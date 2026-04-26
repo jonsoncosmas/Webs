@@ -3,6 +3,7 @@
 use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordChangeController;
+use App\Http\Controllers\Bus\BusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Discipline\DisciplineController;
 use App\Http\Controllers\Exams\ExamController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\HR\StaffCertificateController;
 use App\Http\Controllers\HR\StaffController;
 use App\Http\Controllers\HR\StaffLeaveController;
 use App\Http\Controllers\Orion\OrionController;
+use App\Http\Controllers\Packages\PackageController;
 use App\Http\Controllers\Portal\AttemptScoreController;
 use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\Portal\ReviewInboxController;
@@ -117,5 +119,18 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/analytics/exams', [AnalyticsController::class, 'exams'])->name('analytics.exams');
         Route::get('/analytics/discipline', [AnalyticsController::class, 'discipline'])->name('analytics.discipline');
         Route::get('/analytics/students/{user}', [AnalyticsController::class, 'student'])->name('analytics.student');
+
+        // Packages — System Admin assigns; school leaders view their own subscription.
+        Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
+        Route::post('/packages/schools/{school}', [PackageController::class, 'assign'])->name('packages.assign');
+        Route::get('/school/package', [PackageController::class, 'school'])->name('packages.school');
+
+        // Bus tracking — Elite-gated (enforced in BusPolicy).
+        Route::get('/bus', [BusController::class, 'index'])->name('bus.index');
+        Route::get('/bus/map', [BusController::class, 'map'])->name('bus.map');
+        Route::post('/bus/routes', [BusController::class, 'storeRoute'])->name('bus.routes.store');
+        Route::post('/bus/routes/{route}/stops', [BusController::class, 'storeStop'])->name('bus.stops.store');
+        Route::post('/bus/vehicles', [BusController::class, 'storeVehicle'])->name('bus.vehicles.store');
+        Route::post('/bus/vehicles/{vehicle}/position', [BusController::class, 'recordPosition'])->name('bus.vehicles.position');
     });
 });

@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\BusRoute;
+use App\Models\BusVehicle;
 use App\Models\DisciplineIncident;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
+use App\Models\Package;
 use App\Models\ResultReviewRequest;
 use App\Models\StaffCertificate;
 use App\Models\StaffLeave;
@@ -12,9 +15,11 @@ use App\Models\StaffProfile;
 use App\Models\Template;
 use App\Models\TemplateAssignment;
 use App\Policies\AnalyticsPolicy;
+use App\Policies\BusPolicy;
 use App\Policies\DisciplineIncidentPolicy;
 use App\Policies\ExamAttemptPolicy;
 use App\Policies\ExamPolicy;
+use App\Policies\PackagePolicy;
 use App\Policies\ResultReviewRequestPolicy;
 use App\Policies\StaffCertificatePolicy;
 use App\Policies\StaffLeavePolicy;
@@ -45,5 +50,9 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('analytics.view-school', [AnalyticsPolicy::class, 'viewSchool']);
         Gate::define('analytics.view-student', [AnalyticsPolicy::class, 'viewStudent']);
+
+        Gate::policy(Package::class, PackagePolicy::class);
+        Gate::policy(BusRoute::class, BusPolicy::class);
+        Gate::policy(BusVehicle::class, BusPolicy::class);
     }
 }

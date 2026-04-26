@@ -84,5 +84,19 @@
                 <a class="btn ghost" href="{{ route('analytics.discipline') }}">Discipline KPIs</a>
             </div>
         </div>
+        <div class="card">
+            <h3>Subscription</h3>
+            <p class="muted">{{ auth()->user()->school?->package?->name ?? 'No package' }}
+                @if (auth()->user()->school?->hasFeature('bus_tracking'))
+                    · Bus tracking enabled
+                @endif
+            </p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a class="btn ghost" href="{{ route('packages.school') }}">Subscription details</a>
+                @if (auth()->user()->school?->hasFeature('bus_tracking'))
+                    <a class="btn" href="{{ route('bus.index') }}">Bus tracking</a>
+                @endif
+            </div>
+        </div>
     </div>
 @endsection

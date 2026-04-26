@@ -21,7 +21,7 @@ class DemoSchoolSeeder extends Seeder
 {
     public function run(): void
     {
-        $pkg = Package::where('slug', Package::PRO)->first();
+        $pkg = Package::where('slug', Package::ELITE)->first();
         $school = School::updateOrCreate(
             ['slug' => 'demo-secondary'],
             [
