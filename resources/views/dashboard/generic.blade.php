@@ -37,6 +37,9 @@
                 @can('viewAny', App\Models\ResultReviewRequest::class)
                     <a class="btn ghost" href="{{ route('academic.reviews.index') }}">Review inbox</a>
                 @endcan
+                @if ($user->school && $user->can('analytics.view-school', $user->school))
+                    <a class="btn ghost" href="{{ route('analytics.overview') }}">Analytics</a>
+                @endif
             </div>
             <p class="muted" style="margin-top:10px;">More role-specific tools will appear here as modules roll out.</p>
         </div>

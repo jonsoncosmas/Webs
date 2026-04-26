@@ -67,11 +67,22 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
-        <h3>Academic reviews</h3>
-        <p class="muted">Pending student / parent review requests.</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <a class="btn ghost" href="{{ route('academic.reviews.index') }}">Review inbox</a>
+    <div class="grid cols-2" style="margin-top:16px; gap:16px;">
+        <div class="card">
+            <h3>Academic reviews</h3>
+            <p class="muted">Pending student / parent review requests.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a class="btn ghost" href="{{ route('academic.reviews.index') }}">Review inbox</a>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Analytics</h3>
+            <p class="muted">School KPIs, scoring trend, and behaviour ↔ academics correlation.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a class="btn ghost" href="{{ route('analytics.overview') }}">Overview</a>
+                <a class="btn ghost" href="{{ route('analytics.exams') }}">Exam KPIs</a>
+                <a class="btn ghost" href="{{ route('analytics.discipline') }}">Discipline KPIs</a>
+            </div>
         </div>
     </div>
 @endsection
