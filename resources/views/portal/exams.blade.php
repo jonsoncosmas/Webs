@@ -15,14 +15,21 @@
             <div class="grid" style="gap:10px;">
                 @foreach ($exams as $exam)
                     <div style="padding:12px 14px; border:1px solid rgba(15,23,42,0.08); border-radius:12px; background:rgba(255,255,255,0.75);">
-                        <div style="font-weight:600;">{{ $exam->title }}</div>
-                        <div class="muted" style="font-size:13px; margin-top:2px;">
-                            {{ $exam->subject }}
-                            @if ($exam->form_level) · {{ $exam->form_level }} @endif
-                            @if ($exam->curriculum) · {{ $exam->curriculum }} @endif
-                            @if ($exam->duration_minutes) · {{ $exam->duration_minutes }} min @endif
-                            @if ($exam->total_marks) · {{ $exam->total_marks }} marks @endif
-                            @if ($exam->scheduled_at) · {{ $exam->scheduled_at->format('Y-m-d H:i') }} @endif
+                        <div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+                            <div>
+                                <div style="font-weight:600;">{{ $exam->title }}</div>
+                                <div class="muted" style="font-size:13px; margin-top:2px;">
+                                    {{ $exam->subject }}
+                                    @if ($exam->form_level) · {{ $exam->form_level }} @endif
+                                    @if ($exam->curriculum) · {{ $exam->curriculum }} @endif
+                                    @if ($exam->duration_minutes) · {{ $exam->duration_minutes }} min @endif
+                                    @if ($exam->total_marks) · {{ $exam->total_marks }} marks @endif
+                                    @if ($exam->scheduled_at) · {{ $exam->scheduled_at->format('Y-m-d H:i') }} @endif
+                                </div>
+                            </div>
+                            @if ($user->hasRole(\App\Models\Role::STUDENT))
+                                <a class="btn" href="{{ route('portal.exams.take', $exam) }}">Take exam</a>
+                            @endif
                         </div>
                     </div>
                 @endforeach

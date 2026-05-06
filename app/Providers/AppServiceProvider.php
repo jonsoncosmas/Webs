@@ -7,6 +7,7 @@ use App\Models\BusVehicle;
 use App\Models\DisciplineIncident;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
+use App\Models\ExamQuestion;
 use App\Models\Package;
 use App\Models\ResultReviewRequest;
 use App\Models\StaffCertificate;
@@ -19,6 +20,7 @@ use App\Policies\BusPolicy;
 use App\Policies\DisciplineIncidentPolicy;
 use App\Policies\ExamAttemptPolicy;
 use App\Policies\ExamPolicy;
+use App\Policies\ExamQuestionPolicy;
 use App\Policies\PackagePolicy;
 use App\Policies\ResultReviewRequestPolicy;
 use App\Policies\StaffCertificatePolicy;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Exam::class, ExamPolicy::class);
+        Gate::policy(ExamQuestion::class, ExamQuestionPolicy::class);
         Gate::policy(Template::class, TemplatePolicy::class);
         Gate::policy(TemplateAssignment::class, TemplateAssignmentPolicy::class);
         Gate::policy(StaffProfile::class, StaffProfilePolicy::class);
