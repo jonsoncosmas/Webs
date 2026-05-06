@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Exam;
 use App\Models\ExamAttempt;
 use App\Models\Role;
 use App\Models\User;
@@ -68,6 +69,35 @@ class ExamAttemptPolicy
         }
 
         return $user->hasRole(...self::SCORERS);
+    }
+
+    /**
+     * A student may *take* a published exam in their own school.
+     */
+    public function take(User $user, Exam $exam): bool
+    {
+        if (! $user->hasRole(Role::STUDENT)) {
+            return false;
+        }
+
+        if ($user->school_id !== $exam->school_id) {
+            return false;
+        }
+
+        return $exam->status === Exam::STATUS_PUBLISHED;
+    }
+
+    /**
+     * Submit / save answers on an in-progress attempt — student who owns it.
+     */
+    public function submit(User $user, ExamAttempt $attempt): bool
+    {
+        if (! $user->hasRole(Role::STUDENT)) {
+            return false;
+        }
+
+        return $user->id === $attempt->student_user_id
+            && $user->school_id === $attempt->school_id;
     }
 
     private function isSystemAdmin(User $user): bool

@@ -53,6 +53,16 @@
         @endif
     </div>
 
+    @can('viewBank', [\App\Models\ExamQuestion::class, $exam])
+        <div class="card" style="margin-top:16px;">
+            <h3 style="margin-top:0;">Question bank</h3>
+            <p class="muted" style="margin:0 0 8px 0;">
+                {{ $exam->questions()->count() }} question(s) · total {{ $exam->questions()->sum('marks') }} marks.
+            </p>
+            <a class="btn ghost" href="{{ route('exams.questions.index', $exam) }}">Manage questions</a>
+        </div>
+    @endcan
+
     <div class="card" style="margin-top:16px;">
         <h3 style="margin-top:0;">Actions</h3>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">

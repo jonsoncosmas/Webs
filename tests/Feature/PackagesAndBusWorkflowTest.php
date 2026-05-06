@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\BusFieldException;
 use App\Models\BusRoute;
 use App\Models\BusVehicle;
 use App\Models\Package;
 use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
+use App\Services\Bus\BusTrackingService;
 use Database\Seeders\PackageSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -258,7 +260,7 @@ class PackagesAndBusWorkflowTest extends TestCase
         // Direct service test — exercises the catch path in BusController without
         // going through Rule::exists validation. Confirms the field name is preserved
         // so callers can attribute the error correctly.
-        $service = app(\App\Services\Bus\BusTrackingService::class);
+        $service = app(BusTrackingService::class);
         $director = $this->user(Role::DIRECTOR, $this->eliteSchool);
         $other = School::create([
             'name' => 'Other Elite', 'slug' => 'other-elite-svc', 'status' => 'active',
@@ -274,7 +276,7 @@ class PackagesAndBusWorkflowTest extends TestCase
                 'bus_route_id' => $foreignRoute->id,
             ]);
             $this->fail('Expected BusFieldException for route mismatch.');
-        } catch (\App\Exceptions\BusFieldException $e) {
+        } catch (BusFieldException $e) {
             $this->assertSame('bus_route_id', $e->field);
         }
 
@@ -285,7 +287,7 @@ class PackagesAndBusWorkflowTest extends TestCase
                 'driver_user_id' => $foreignDriver->id,
             ]);
             $this->fail('Expected BusFieldException for driver mismatch.');
-        } catch (\App\Exceptions\BusFieldException $e) {
+        } catch (BusFieldException $e) {
             $this->assertSame('driver_user_id', $e->field);
         }
     }

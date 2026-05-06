@@ -7,12 +7,14 @@ use App\Http\Controllers\Bus\BusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Discipline\DisciplineController;
 use App\Http\Controllers\Exams\ExamController;
+use App\Http\Controllers\Exams\ExamQuestionController;
 use App\Http\Controllers\HR\StaffCertificateController;
 use App\Http\Controllers\HR\StaffController;
 use App\Http\Controllers\HR\StaffLeaveController;
 use App\Http\Controllers\Orion\OrionController;
 use App\Http\Controllers\Packages\PackageController;
 use App\Http\Controllers\Portal\AttemptScoreController;
+use App\Http\Controllers\Portal\ExamTakingController;
 use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\Portal\ReviewInboxController;
 use App\Http\Controllers\Templates\TemplateAssignmentController;
@@ -53,6 +55,15 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/exams/{exam}/override', [ExamController::class, 'override'])->name('exams.override');
         Route::post('/exams/{exam}/publish', [ExamController::class, 'publish'])->name('exams.publish');
         Route::post('/exams/{exam}/archive', [ExamController::class, 'archive'])->name('exams.archive');
+
+        // Exam question bank (authoring by creators).
+        Route::get('/exams/{exam}/questions', [ExamQuestionController::class, 'index'])->name('exams.questions.index');
+        Route::post('/exams/{exam}/questions', [ExamQuestionController::class, 'store'])->name('exams.questions.store');
+        Route::post('/questions/{question}/delete', [ExamQuestionController::class, 'destroy'])->name('exams.questions.destroy');
+
+        // Student exam take-flow.
+        Route::get('/portal/exams/{exam}/take', [ExamTakingController::class, 'take'])->name('portal.exams.take');
+        Route::post('/portal/exams/{exam}/submit', [ExamTakingController::class, 'submit'])->name('portal.exams.submit');
 
         // Templates — System Admin authors; schools list & assign.
         Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
