@@ -364,5 +364,6 @@
 
     <div style="margin-top:16px; display:flex; gap:8px;">
         <a class="btn ghost" href="{{ route('hr.index') }}">Back to directory</a>
+        <a class="btn" href="{{ route('hr.certificate.pdf', $subject) }}">Certificate of service (PDF)</a>
     </div>
 @endsection

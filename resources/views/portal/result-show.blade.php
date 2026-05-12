@@ -87,7 +87,8 @@
         </div>
     @endif
 
-    <div style="margin-top:16px;">
+    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
         <a class="btn ghost" href="{{ route('portal.results', ['student_id' => $attempt->student_user_id]) }}">Back to results</a>
+        <a class="btn" href="{{ route('portal.result.pdf', $attempt) }}">Download result PDF</a>
     </div>
 @endsection

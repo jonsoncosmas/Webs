@@ -13,6 +13,9 @@ use App\Http\Controllers\HR\StaffController;
 use App\Http\Controllers\HR\StaffLeaveController;
 use App\Http\Controllers\Orion\OrionController;
 use App\Http\Controllers\Packages\PackageController;
+use App\Http\Controllers\Pdf\AssignmentPdfController;
+use App\Http\Controllers\Pdf\ResultPdfController;
+use App\Http\Controllers\Pdf\StaffCertificatePdfController;
 use App\Http\Controllers\Portal\AttemptScoreController;
 use App\Http\Controllers\Portal\ExamTakingController;
 use App\Http\Controllers\Portal\PortalController;
@@ -143,5 +146,10 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/bus/routes/{route}/stops', [BusController::class, 'storeStop'])->name('bus.stops.store');
         Route::post('/bus/vehicles', [BusController::class, 'storeVehicle'])->name('bus.vehicles.store');
         Route::post('/bus/vehicles/{vehicle}/position', [BusController::class, 'recordPosition'])->name('bus.vehicles.position');
+
+        // PDF downloads — generated server-side via dompdf.
+        Route::get('/assignments/{assignment}/pdf', [AssignmentPdfController::class, 'download'])->name('assignments.pdf');
+        Route::get('/hr/staff/{subject}/certificate.pdf', [StaffCertificatePdfController::class, 'download'])->name('hr.certificate.pdf');
+        Route::get('/portal/results/{attempt}/pdf', [ResultPdfController::class, 'download'])->name('portal.result.pdf');
     });
 });
