@@ -69,6 +69,10 @@
                 <a class="btn" href="{{ route('assignments.print', $assignment) }}">Open print view</a>
             @endcan
 
+            @can('view', $assignment)
+                <a class="btn ghost" href="{{ route('assignments.pdf', $assignment) }}">Download PDF</a>
+            @endcan
+
             <a class="btn ghost" href="{{ route('assignments.index') }}">Back</a>
         </div>
     </div>
